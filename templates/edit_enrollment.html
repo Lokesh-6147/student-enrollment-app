@@ -1,0 +1,292 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Enrollment{% endblock %}
+
+{% block content %}
+
+<style>
+    .edit-enrollment-header {
+        background: linear-gradient(135deg, #ffc107, #d39e00);
+        color: #212529;
+        border-radius: 18px;
+        padding: 28px;
+        margin-bottom: 24px;
+        box-shadow: 0 8px 20px rgba(255, 193, 7, 0.18);
+    }
+
+    .edit-enrollment-header h2 {
+        margin-bottom: 8px;
+        font-weight: 700;
+    }
+
+    .edit-enrollment-header p {
+        margin-bottom: 0;
+        opacity: 0.85;
+    }
+
+    .edit-enrollment-card {
+        background: white;
+        border-radius: 18px;
+        padding: 30px;
+        box-shadow: 0 5px 18px rgba(0, 0, 0, 0.06);
+        border: 1px solid #e9eef5;
+    }
+
+    .section-title {
+        color: #946200;
+        font-size: 18px;
+        font-weight: 700;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #fff3cd;
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: #344054;
+    }
+
+    .required-star {
+        color: #dc3545;
+        margin-left: 3px;
+    }
+
+    .form-control,
+    .form-select {
+        border-radius: 10px;
+        padding: 11px 13px;
+        border: 1px solid #d0d5dd;
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+        border-color: #ffc107;
+        box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.18);
+    }
+
+    .selection-box {
+        background: #fffaf0;
+        border: 1px solid #ffe69c;
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 24px;
+    }
+
+    .details-box {
+        background: #f8f9fa;
+        border: 1px solid #e9ecef;
+        border-radius: 12px;
+        padding: 20px;
+    }
+
+    .form-help {
+        font-size: 13px;
+        color: #667085;
+        margin-top: 5px;
+    }
+
+    .form-actions {
+        border-top: 1px solid #eaecf0;
+        margin-top: 24px;
+        padding-top: 24px;
+    }
+
+    .btn {
+        border-radius: 9px;
+        padding: 10px 22px;
+        font-weight: 600;
+    }
+
+    @media (max-width: 768px) {
+        .edit-enrollment-header,
+        .edit-enrollment-card {
+            padding: 20px;
+        }
+
+        .edit-enrollment-header h2 {
+            font-size: 24px;
+        }
+
+        .form-actions .btn {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+    }
+</style>
+
+<div class="edit-enrollment-header">
+    <h2>
+        <i class="bi bi-pencil-square me-2"></i>
+        Edit Enrollment Details
+    </h2>
+
+    <p>
+        Update the student, course, enrollment date, or current enrollment status.
+    </p>
+</div>
+
+<div class="edit-enrollment-card">
+
+    <form method="POST">
+
+        <div class="section-title">
+            <i class="bi bi-person-check-fill me-2"></i>
+            Student and Course Information
+        </div>
+
+        <div class="selection-box">
+
+            <div class="mb-4">
+                <label for="student_id" class="form-label">
+                    Select Student <span class="required-star">*</span>
+                </label>
+
+                <select
+                    id="student_id"
+                    name="student_id"
+                    class="form-select"
+                    required
+                >
+                    {% for student in students %}
+                    <option
+                        value="{{ student.student_id }}"
+                        {% if student.student_id == enrollment.student_id %}selected{% endif %}
+                    >
+                        {{ student.first_name }} {{ student.last_name }}
+                    </option>
+                    {% endfor %}
+                </select>
+
+                <div class="form-help">
+                    Select the student associated with this enrollment.
+                </div>
+            </div>
+
+            <div class="mb-0">
+                <label for="course_id" class="form-label">
+                    Select Course <span class="required-star">*</span>
+                </label>
+
+                <select
+                    id="course_id"
+                    name="course_id"
+                    class="form-select"
+                    required
+                >
+                    {% for course in courses %}
+                    <option
+                        value="{{ course.course_id }}"
+                        {% if course.course_id == enrollment.course_id %}selected{% endif %}
+                    >
+                        {{ course.course_name }}
+                    </option>
+                    {% endfor %}
+                </select>
+
+                <div class="form-help">
+                    Select the course associated with this enrollment.
+                </div>
+            </div>
+
+        </div>
+
+        <div class="section-title">
+            <i class="bi bi-calendar-event me-2"></i>
+            Enrollment Details
+        </div>
+
+        <div class="details-box">
+
+            <div class="row">
+
+                <div class="col-md-6 mb-3">
+                    <label for="enrollment_date" class="form-label">
+                        Enrollment Date <span class="required-star">*</span>
+                    </label>
+
+                    <input
+                        type="date"
+                        id="enrollment_date"
+                        name="enrollment_date"
+                        class="form-control"
+                        value="{{ enrollment.enrollment_date or '' }}"
+                        required
+                    >
+
+                    <div class="form-help">
+                        Update the enrollment date if required.
+                    </div>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label for="status" class="form-label">
+                        Enrollment Status <span class="required-star">*</span>
+                    </label>
+
+                    <select
+                        id="status"
+                        name="status"
+                        class="form-select"
+                        required
+                    >
+                        <option
+                            value="Active"
+                            {% if enrollment.status == "Active" %}selected{% endif %}
+                        >
+                            Active
+                        </option>
+
+                        <option
+                            value="Completed"
+                            {% if enrollment.status == "Completed" %}selected{% endif %}
+                        >
+                            Completed
+                        </option>
+
+                        <option
+                            value="Cancelled"
+                            {% if enrollment.status == "Cancelled" %}selected{% endif %}
+                        >
+                            Cancelled
+                        </option>
+                    </select>
+
+                    <div class="form-help">
+                        Select the current status of this enrollment.
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="form-help mt-3">
+            <span class="required-star">*</span>
+            Required fields
+        </div>
+
+        <div class="form-actions d-flex gap-2 flex-wrap">
+
+            <button
+                type="submit"
+                class="btn btn-primary"
+            >
+                <i class="bi bi-save me-2"></i>
+                Update Enrollment
+            </button>
+
+            <a
+                href="{{ url_for('enrollments') }}"
+                class="btn btn-secondary"
+            >
+                <i class="bi bi-arrow-left me-2"></i>
+                Cancel
+            </a>
+
+        </div>
+
+    </form>
+
+</div>
+
+{% endblock %}

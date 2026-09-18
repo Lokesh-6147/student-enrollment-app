@@ -1,0 +1,535 @@
+{% extends "base.html" %}
+
+{% block title %}Enrollments - Student Enrollment System{% endblock %}
+
+{% block content %}
+
+<style>
+    .enrollments-header {
+        background: linear-gradient(135deg, #ffffff, #fff8e8);
+        border: 1px solid #f3e6c4;
+        border-radius: 18px;
+        padding: 25px;
+        margin-bottom: 25px;
+    }
+
+    .enrollments-header h2 {
+        color: #1f2937;
+        font-weight: 700;
+    }
+
+    .enrollments-header p {
+        color: #6b7280;
+    }
+
+    .new-enrollment-btn {
+        border-radius: 10px;
+        padding: 11px 18px;
+        font-weight: 600;
+        transition: 0.2s ease-in-out;
+    }
+
+    .new-enrollment-btn:hover {
+        transform: translateY(-2px);
+    }
+
+    .search-card,
+    .enrollments-card {
+        border: none;
+        border-radius: 18px;
+        overflow: hidden;
+    }
+
+    .section-title {
+        color: #1f2937;
+        font-weight: 700;
+    }
+
+    .search-input,
+    .status-select {
+        border-radius: 10px;
+        padding: 12px 15px;
+        border: 1px solid #d9e2ef;
+    }
+
+    .search-input:focus,
+    .status-select:focus {
+        border-color: #0d6efd;
+        box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.12);
+    }
+
+    .search-btn,
+    .clear-btn {
+        border-radius: 10px;
+        padding: 10px 18px;
+        font-weight: 600;
+    }
+
+    .enrollments-table {
+        min-width: 950px;
+    }
+
+    .enrollments-table thead th {
+        background-color: #f1f5f9;
+        color: #374151;
+        font-size: 13px;
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+        white-space: nowrap;
+        padding: 16px 14px;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    .enrollments-table tbody td {
+        padding: 16px 14px;
+        vertical-align: middle;
+        color: #4b5563;
+    }
+
+    .enrollments-table tbody tr {
+        transition: background-color 0.2s ease-in-out;
+    }
+
+    .enrollments-table tbody tr:hover {
+        background-color: #fffdf7;
+    }
+
+    .enrollment-id {
+        color: #b7791f;
+        font-weight: 700;
+    }
+
+    .student-name,
+    .course-name {
+        color: #1f2937;
+        font-weight: 700;
+    }
+
+    .enrollment-date {
+        color: #6b7280;
+        font-size: 14px;
+        white-space: nowrap;
+    }
+
+    .status-badge {
+        display: inline-block;
+        border-radius: 20px;
+        padding: 7px 12px;
+        font-size: 12px;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .status-active {
+        background-color: #dff6e7;
+        color: #16713b;
+    }
+
+    .status-completed {
+        background-color: #e4efff;
+        color: #2459a6;
+    }
+
+    .status-cancelled {
+        background-color: #ffe4e6;
+        color: #b42318;
+    }
+
+    .status-default {
+        background-color: #e5e7eb;
+        color: #374151;
+    }
+
+    .action-btn {
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        padding: 7px 11px;
+        white-space: nowrap;
+    }
+
+    .enrollment-count {
+        background-color: #fff2cc;
+        color: #946200;
+        border-radius: 20px;
+        padding: 6px 12px;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .empty-state {
+        padding: 65px 20px;
+    }
+
+    .empty-icon {
+        width: 75px;
+        height: 75px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 20px;
+        border-radius: 50%;
+        background-color: #fff4d6;
+        font-size: 36px;
+    }
+
+    @media (max-width: 768px) {
+        .enrollments-header {
+            padding: 20px;
+        }
+
+        .enrollments-header h2 {
+            font-size: 24px;
+        }
+
+        .enrollments-table thead th,
+        .enrollments-table tbody td {
+            padding: 12px 10px;
+        }
+    }
+</style>
+
+
+<!-- Page Header -->
+<div class="enrollments-header d-flex flex-column flex-md-row justify-content-between align-items-md-center">
+
+    <div>
+        <div class="d-flex align-items-center gap-2 mb-2">
+            <span class="badge bg-warning-subtle text-warning-emphasis">
+                Enrollment Records
+            </span>
+        </div>
+
+        <h2 class="mb-1">Enrollment Management</h2>
+
+        <p class="mb-0">
+            Manage student course enrollments and track their status.
+        </p>
+    </div>
+
+    <a
+        href="{{ url_for('add_enrollment') }}"
+        class="btn btn-warning new-enrollment-btn mt-3 mt-md-0"
+    >
+        ➕ New Enrollment
+    </a>
+
+</div>
+
+
+<!-- Search and Filter Section -->
+<div class="card search-card shadow-sm mb-4">
+
+    <div class="card-body p-4">
+
+        <div class="d-flex align-items-center gap-2 mb-3">
+            <span class="fs-5">🔍</span>
+            <h5 class="section-title mb-0">
+                Search & Filter Enrollments
+            </h5>
+        </div>
+
+        <form method="GET" action="{{ url_for('enrollments') }}">
+
+            <div class="row g-3">
+
+                <!-- Search -->
+                <div class="col-md-6">
+
+                    <label class="form-label fw-semibold">
+                        Search
+                    </label>
+
+                    <input
+                        type="text"
+                        name="search"
+                        class="form-control search-input"
+                        placeholder="Search by student or course..."
+                        value="{{ search }}"
+                    >
+
+                </div>
+
+
+                <!-- Status -->
+                <div class="col-md-3">
+
+                    <label class="form-label fw-semibold">
+                        Enrollment Status
+                    </label>
+
+                    <select name="status" class="form-select status-select">
+
+                        <option value="">
+                            All Statuses
+                        </option>
+
+                        <option
+                            value="Active"
+                            {% if status == "Active" %}selected{% endif %}
+                        >
+                            Active
+                        </option>
+
+                        <option
+                            value="Completed"
+                            {% if status == "Completed" %}selected{% endif %}
+                        >
+                            Completed
+                        </option>
+
+                        <option
+                            value="Cancelled"
+                            {% if status == "Cancelled" %}selected{% endif %}
+                        >
+                            Cancelled
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- Buttons -->
+                <div class="col-md-3 d-flex align-items-end gap-2">
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary search-btn flex-grow-1"
+                    >
+                        🔍 Search
+                    </button>
+
+                    {% if search or status %}
+                    <a
+                        href="{{ url_for('enrollments') }}"
+                        class="btn btn-outline-secondary clear-btn"
+                    >
+                        Clear
+                    </a>
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<!-- Enrollment Table -->
+<div class="card enrollments-card shadow-sm">
+
+    <!-- Table Header -->
+    <div class="card-body border-bottom p-4">
+
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+
+            <div>
+                <h5 class="section-title mb-1">
+                    📝 Enrollment Records
+                </h5>
+
+                <p class="text-muted mb-0">
+                    View and manage student enrollment details and status.
+                </p>
+            </div>
+
+            <div>
+                {% if enrollments %}
+                    <span class="enrollment-count">
+                        {{ enrollments|length }} enrollment(s) found
+                    </span>
+                {% else %}
+                    <span class="badge bg-secondary-subtle text-secondary">
+                        No enrollments found
+                    </span>
+                {% endif %}
+            </div>
+
+        </div>
+
+    </div>
+
+
+    {% if enrollments %}
+
+    <!-- Responsive Table -->
+    <div class="table-responsive">
+
+        <table class="table table-hover mb-0 enrollments-table">
+
+            <thead>
+
+                <tr>
+                    <th class="ps-4">ID</th>
+                    <th>Student</th>
+                    <th>Course</th>
+                    <th>Enrollment Date</th>
+                    <th>Status</th>
+                    <th class="text-center pe-4">Actions</th>
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                {% for enrollment in enrollments %}
+
+                <tr>
+
+                    <!-- Enrollment ID -->
+                    <td class="ps-4">
+                        <span class="enrollment-id">
+                            #{{ enrollment.enrollment_id }}
+                        </span>
+                    </td>
+
+
+                    <!-- Student -->
+                    <td>
+                        <div class="student-name">
+                            👨‍🎓 {{ enrollment.student_name }}
+                        </div>
+                    </td>
+
+
+                    <!-- Course -->
+                    <td>
+                        <div class="course-name">
+                            📚 {{ enrollment.course_name }}
+                        </div>
+                    </td>
+
+
+                    <!-- Enrollment Date -->
+                    <td>
+                        <span class="enrollment-date">
+                            📅 {{ enrollment.enrollment_date }}
+                        </span>
+                    </td>
+
+
+                    <!-- Status -->
+                    <td>
+
+                        {% if enrollment.status == "Active" %}
+
+                            <span class="status-badge status-active">
+                                ● Active
+                            </span>
+
+                        {% elif enrollment.status == "Completed" %}
+
+                            <span class="status-badge status-completed">
+                                ● Completed
+                            </span>
+
+                        {% elif enrollment.status == "Cancelled" %}
+
+                            <span class="status-badge status-cancelled">
+                                ● Cancelled
+                            </span>
+
+                        {% else %}
+
+                            <span class="status-badge status-default">
+                                ● {{ enrollment.status }}
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+
+
+                    <!-- Actions -->
+                    <td class="text-center pe-4">
+
+                        <div class="d-flex justify-content-center gap-2">
+
+                            <!-- Edit -->
+                            <a
+                                href="{{ url_for('edit_enrollment', enrollment_id=enrollment.enrollment_id) }}"
+                                class="btn btn-outline-primary btn-sm action-btn"
+                                title="Edit Enrollment"
+                            >
+                                ✏️ Edit
+                            </a>
+
+
+                            <!-- Delete -->
+                            <a
+                                href="{{ url_for('delete_enrollment', enrollment_id=enrollment.enrollment_id) }}"
+                                class="btn btn-danger btn-sm action-btn"
+                                title="Delete Enrollment"
+                                onclick="return confirm('Are you sure you want to delete this enrollment?');"
+                            >
+                                🗑️ Delete
+                            </a>
+
+                        </div>
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+
+    {% else %}
+
+    <!-- Empty State -->
+    <div class="empty-state text-center">
+
+        <div class="empty-icon">
+            📝
+        </div>
+
+        <h5 class="fw-bold">
+            No enrollments found
+        </h5>
+
+        {% if search or status %}
+
+        <p class="text-muted mb-3">
+            No enrollment records match the selected search or filter.
+        </p>
+
+        <a
+            href="{{ url_for('enrollments') }}"
+            class="btn btn-outline-primary clear-btn"
+        >
+            Clear Filters
+        </a>
+
+        {% else %}
+
+        <p class="text-muted mb-3">
+            There are currently no enrollment records in the system.
+        </p>
+
+        <a
+            href="{{ url_for('add_enrollment') }}"
+            class="btn btn-warning new-enrollment-btn"
+        >
+            ➕ Create First Enrollment
+        </a>
+
+        {% endif %}
+
+    </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

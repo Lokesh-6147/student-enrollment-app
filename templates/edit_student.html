@@ -1,0 +1,370 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Student{% endblock %}
+
+{% block content %}
+
+<style>
+    .edit-student-header {
+        background: linear-gradient(135deg, #0d6efd, #084298);
+        color: white;
+        border-radius: 18px;
+        padding: 28px;
+        margin-bottom: 24px;
+        box-shadow: 0 8px 20px rgba(13, 110, 253, 0.15);
+    }
+
+    .edit-student-header h2 {
+        margin-bottom: 8px;
+        font-weight: 700;
+    }
+
+    .edit-student-header p {
+        margin-bottom: 0;
+        opacity: 0.9;
+    }
+
+    .edit-student-card {
+        background: white;
+        border-radius: 18px;
+        padding: 30px;
+        box-shadow: 0 5px 18px rgba(0, 0, 0, 0.06);
+        border: 1px solid #e9eef5;
+    }
+
+    .section-title {
+        color: #0d6efd;
+        font-size: 18px;
+        font-weight: 700;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #eaf2ff;
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: #344054;
+    }
+
+    .required-star {
+        color: #dc3545;
+        margin-left: 3px;
+    }
+
+    .form-control,
+    .form-select {
+        border-radius: 10px;
+        padding: 11px 13px;
+        border: 1px solid #d0d5dd;
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+        border-color: #0d6efd;
+        box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.12);
+    }
+
+    textarea.form-control {
+        min-height: 105px;
+        resize: vertical;
+    }
+
+    .form-help {
+        font-size: 13px;
+        color: #667085;
+        margin-top: 5px;
+    }
+
+    .form-actions {
+        border-top: 1px solid #eaecf0;
+        margin-top: 20px;
+        padding-top: 24px;
+    }
+
+    .btn {
+        border-radius: 9px;
+        padding: 10px 22px;
+        font-weight: 600;
+    }
+
+    @media (max-width: 768px) {
+        .edit-student-header,
+        .edit-student-card {
+            padding: 20px;
+        }
+
+        .edit-student-header h2 {
+            font-size: 24px;
+        }
+
+        .form-actions .btn {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+    }
+</style>
+
+<div class="edit-student-header">
+    <h2>
+        <i class="bi bi-person-gear me-2"></i>
+        Edit Student Details
+    </h2>
+
+    <p>
+        Update the student's personal, contact, and educational information.
+    </p>
+</div>
+
+<div class="edit-student-card">
+
+    <form method="POST">
+
+        <div class="section-title">
+            <i class="bi bi-person-vcard me-2"></i>
+            Personal Information
+        </div>
+
+        <div class="row">
+
+            <div class="col-md-6 mb-3">
+                <label for="first_name" class="form-label">
+                    First Name <span class="required-star">*</span>
+                </label>
+
+                <input
+                    type="text"
+                    id="first_name"
+                    name="first_name"
+                    class="form-control"
+                    value="{{ student.first_name or '' }}"
+                    required
+                >
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label for="last_name" class="form-label">
+                    Last Name <span class="required-star">*</span>
+                </label>
+
+                <input
+                    type="text"
+                    id="last_name"
+                    name="last_name"
+                    class="form-control"
+                    value="{{ student.last_name or '' }}"
+                    required
+                >
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label for="dob" class="form-label">
+                    Date of Birth
+                </label>
+
+                <input
+                    type="date"
+                    id="dob"
+                    name="dob"
+                    class="form-control"
+                    value="{{ student.dob or '' }}"
+                >
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label for="gender" class="form-label">
+                    Gender
+                </label>
+
+                <select
+                    id="gender"
+                    name="gender"
+                    class="form-select"
+                >
+                    <option value="">Select Gender</option>
+
+                    <option
+                        value="Male"
+                        {% if student.gender == "Male" %}selected{% endif %}
+                    >
+                        Male
+                    </option>
+
+                    <option
+                        value="Female"
+                        {% if student.gender == "Female" %}selected{% endif %}
+                    >
+                        Female
+                    </option>
+
+                    <option
+                        value="Other"
+                        {% if student.gender == "Other" %}selected{% endif %}
+                    >
+                        Other
+                    </option>
+                </select>
+            </div>
+
+        </div>
+
+        <div class="section-title mt-4">
+            <i class="bi bi-telephone me-2"></i>
+            Contact Information
+        </div>
+
+        <div class="row">
+
+            <div class="col-md-6 mb-3">
+                <label for="email" class="form-label">
+                    Email <span class="required-star">*</span>
+                </label>
+
+                <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    class="form-control"
+                    value="{{ student.email or '' }}"
+                    required
+                >
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label for="phone" class="form-label">
+                    Phone Number
+                </label>
+
+                <input
+                    type="text"
+                    id="phone"
+                    name="phone"
+                    class="form-control"
+                    value="{{ student.phone or '' }}"
+                >
+            </div>
+
+            <div class="col-md-12 mb-3">
+                <label for="address" class="form-label">
+                    Address
+                </label>
+
+                <textarea
+                    id="address"
+                    name="address"
+                    class="form-control"
+                >{{ student.address or '' }}</textarea>
+            </div>
+
+            <div class="col-md-4 mb-3">
+                <label for="city" class="form-label">
+                    City
+                </label>
+
+                <input
+                    type="text"
+                    id="city"
+                    name="city"
+                    class="form-control"
+                    value="{{ student.city or '' }}"
+                >
+            </div>
+
+            <div class="col-md-4 mb-3">
+                <label for="state" class="form-label">
+                    State
+                </label>
+
+                <input
+                    type="text"
+                    id="state"
+                    name="state"
+                    class="form-control"
+                    value="{{ student.state or '' }}"
+                >
+            </div>
+
+            <div class="col-md-4 mb-3">
+                <label for="pincode" class="form-label">
+                    Pincode
+                </label>
+
+                <input
+                    type="text"
+                    id="pincode"
+                    name="pincode"
+                    class="form-control"
+                    value="{{ student.pincode or '' }}"
+                >
+            </div>
+
+        </div>
+
+        <div class="section-title mt-4">
+            <i class="bi bi-mortarboard-fill me-2"></i>
+            Educational Information
+        </div>
+
+        <div class="row">
+
+            <div class="col-md-6 mb-3">
+                <label for="qualification" class="form-label">
+                    Qualification
+                </label>
+
+                <input
+                    type="text"
+                    id="qualification"
+                    name="qualification"
+                    class="form-control"
+                    value="{{ student.qualification or '' }}"
+                >
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label for="passing_year" class="form-label">
+                    Passing Year
+                </label>
+
+                <input
+                    type="number"
+                    id="passing_year"
+                    name="passing_year"
+                    class="form-control"
+                    value="{{ student.passing_year or '' }}"
+                    min="1950"
+                    max="2100"
+                >
+            </div>
+
+        </div>
+
+        <div class="form-help">
+            <span class="required-star">*</span>
+            Required fields
+        </div>
+
+        <div class="form-actions d-flex gap-2 flex-wrap">
+
+            <button
+                type="submit"
+                class="btn btn-primary"
+            >
+                <i class="bi bi-save me-2"></i>
+                Update Student
+            </button>
+
+            <a
+                href="{{ url_for('students') }}"
+                class="btn btn-secondary"
+            >
+                <i class="bi bi-arrow-left me-2"></i>
+                Cancel
+            </a>
+
+        </div>
+
+    </form>
+
+</div>
+
+{% endblock %}

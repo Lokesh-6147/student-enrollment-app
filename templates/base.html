@@ -16,10 +16,6 @@
     :root {
         --primary-blue: #2563eb;
         --dark-blue: #17365d;
-        --soft-blue: #eaf4ff;
-        --soft-green: #eafaf3;
-        --soft-purple: #f1edff;
-        --soft-orange: #fff4df;
         --page-text: #1e3a5f;
         --muted-text: #6b7c93;
         --card-white: rgba(255, 255, 255, 0.92);
@@ -28,6 +24,10 @@
 
     * {
         box-sizing: border-box;
+    }
+
+    html, body {
+        overflow-x: hidden;
     }
 
     body {
@@ -102,13 +102,19 @@
     }
 
     .navbar-brand {
-        color: #17365d !important;
+        color: var(--dark-blue) !important;
         font-size: 1.15rem;
         font-weight: 700;
         letter-spacing: 0.2px;
     }
 
-    .navbar-brand:first-letter {
+    /*
+     * Accent styling for the brand text. :first-letter doesn't reliably
+     * apply color to emoji glyphs (they render as bitmap/multi-color
+     * glyphs regardless of the color property), so the accent letter is
+     * wrapped in its own span in the markup below instead.
+     */
+    .navbar-brand .brand-accent {
         color: var(--primary-blue);
     }
 
@@ -141,13 +147,18 @@
 
     /*
      * General cards
+     *
+     * NOTE: no backdrop-filter here. backdrop-filter creates a new
+     * containing block for any fixed-position descendants, so a
+     * modal/dropdown/tooltip rendered inside a .card can end up
+     * mispositioned or clipped. It's also expensive to repaint on
+     * mobile. The translucent background alone gives most of the same
+     * "frosted" look without that side effect.
      */
     .card {
         border: 1px solid var(--border-soft);
         border-radius: 18px;
         background: var(--card-white);
-        backdrop-filter: blur(10px);
-        -webkit-backdrop-filter: blur(10px);
         box-shadow:
             0 8px 30px rgba(30, 64, 175, 0.07),
             0 2px 8px rgba(15, 23, 42, 0.03);
@@ -172,6 +183,16 @@
 
     .btn:hover {
         transform: translateY(-1px);
+    }
+
+    /*
+     * Several .btn-* variants below set border: none, which also
+     * strips Bootstrap's default focus/active border cue. Restore a
+     * visible keyboard-focus indicator so those states aren't silent.
+     */
+    .btn:focus-visible {
+        outline: 2px solid var(--primary-blue);
+        outline-offset: 2px;
     }
 
     .btn-primary {
@@ -218,7 +239,7 @@
 
     .table thead th {
         background: #edf5ff;
-        color: #17365d;
+        color: var(--dark-blue);
         white-space: nowrap;
         border-bottom: 1px solid #dbeafe;
     }
@@ -237,7 +258,7 @@
     .alert {
         border: none;
         border-radius: 12px;
-        box-shadow: 0 4px 14px rgba(15, 23, 42, 0.04);
+        box-shadow: 0 4px 14px rgba(15, 23, 42,0.04);
     }
 
     /*
@@ -245,7 +266,7 @@
      */
     .page-heading {
         font-weight: 750;
-        color: #17365d;
+        color: var(--dark-blue);
         letter-spacing: -0.3px;
     }
 
@@ -265,9 +286,15 @@
 
     /*
      * Dashboard background enhancement
+     *
+     * overflow-x: hidden here keeps these decorative circles (which
+     * intentionally sit partly outside the card via negative
+     * top/right/left offsets) from widening the page's scrollable
+     * area on narrow screens.
      */
     .dashboard-page {
         position: relative;
+        overflow-x: hidden;
     }
 
     .dashboard-page::before {
@@ -297,6 +324,31 @@
     }
 
     /*
+     * Respect reduced-motion preference: kill the hover lift/translate
+     * effects and transitions that could otherwise cause jitter or
+     * missed clicks near element edges.
+     */
+    @media (prefers-reduced-motion: reduce) {
+
+        .nav-link,
+        .btn,
+        .table tbody tr,
+        .dashboard-card,
+        .summary-card,
+        .overview-card {
+            transition: none;
+        }
+
+        .nav-link:hover,
+        .btn:hover,
+        .dashboard-card:hover,
+        .summary-card:hover,
+        .overview-card:hover {
+            transform: none;
+        }
+    }
+
+    /*
      * Mobile
      */
     @media (max-width: 768px) {
@@ -322,7 +374,9 @@
             border-radius: 14px;
         }
     }
-</style>
+    </style>
+
+    {% block extra_css %}{% endblock %}
 </head>
 
 <body>
@@ -332,7 +386,7 @@
         <div class="container">
 
             <a class="navbar-brand" href="{{ url_for('home') }}">
-                🎓 Student Enrollment System
+                <span aria-hidden="true">🎓</span> <span class="brand-accent">S</span>tudent Enrollment System
             </a>
 
             <button

@@ -3,7 +3,7 @@
 {% block title %}Dashboard - Student Enrollment System{% endblock %}
 
 {% block content %}
-
+<div class="dashboard-page">
 <!-- Dashboard Header -->
 <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
     <div>
@@ -494,139 +494,247 @@
     </div>
 </div>
 
+</div>
+{% endblock %}
 
+{% block extra_css %}
 <!-- Dashboard-Specific Styling -->
 <style>
-    .dashboard-card {
+    /* =========================================
+       DASHBOARD PAGE STYLES (consolidated)
+       ========================================= */
+
+    .dashboard-page {
+        padding-bottom: 20px;
+        overflow-x: hidden;
+    }
+
+    /* Heading */
+    .dashboard-page .page-heading {
+        font-size: 2rem;
+        color: #17365d;
+        letter-spacing: -0.5px;
+    }
+
+    .dashboard-page .text-muted {
+        color: var(--muted-text, #6b7c93) !important;
+    }
+
+    /* Statistics cards */
+    .dashboard-page .dashboard-card {
+        position: relative;
+        overflow: hidden;
         border: none;
         border-top: 5px solid transparent;
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.94);
+        box-shadow: 0 10px 30px rgba(30, 64, 175, 0.07);
+        transition:
+            transform 0.25s ease,
+            box-shadow 0.25s ease;
     }
 
-    .dashboard-card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.10) !important;
+    .dashboard-page .dashboard-card::after {
+        content: "";
+        position: absolute;
+        right: -35px;
+        bottom: -35px;
+        width: 110px;
+        height: 110px;
+        border-radius: 50%;
+        background: rgba(59, 130, 246, 0.05);
     }
 
-    .student-card {
+    .dashboard-page .dashboard-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 16px 35px rgba(30, 64, 175, 0.12) !important;
+    }
+
+    /* Per-card top accent colors (kept last so they always win) */
+    .dashboard-page .student-card {
         border-top-color: #0d6efd;
     }
 
-    .course-card {
+    .dashboard-page .course-card {
         border-top-color: #198754;
     }
 
-    .enrollment-card {
+    .dashboard-page .enrollment-card {
         border-top-color: #ffc107;
     }
 
-    .active-card {
+    .dashboard-page .active-card {
         border-top-color: #0dcaf0;
     }
 
-    .dashboard-icon {
+    /* Dashboard icons */
+    .dashboard-page .dashboard-icon {
         width: 58px;
         height: 58px;
+        border-radius: 16px;
+        font-size: 1.65rem;
         display: flex;
         align-items: center;
         justify-content: center;
-        border-radius: 50%;
-        font-size: 1.8rem;
+        position: relative;
+        z-index: 2;
     }
 
-    .student-icon {
-        background-color: #e7f0ff;
+    .dashboard-page .student-icon {
+        background: linear-gradient(135deg, #dbeafe, #bfdbfe);
     }
 
-    .course-icon {
-        background-color: #e5f7ed;
+    .dashboard-page .course-icon {
+        background: linear-gradient(135deg, #d1fae5, #a7f3d0);
     }
 
-    .enrollment-icon {
-        background-color: #fff5d6;
+    .dashboard-page .enrollment-icon {
+        background: linear-gradient(135deg, #ede9fe, #ddd6fe);
     }
 
-    .active-icon {
-        background-color: #e2f8fc;
+    .dashboard-page .active-icon {
+        background: linear-gradient(135deg, #ffedd5, #fed7aa);
     }
 
-    .dashboard-section {
+    /* Card numbers */
+    .dashboard-page .dashboard-card h2 {
+        font-size: 2rem;
+        color: #17365d;
+        margin-top: 5px;
+    }
+
+    /* Section cards (Recent Enrollments, Summary, Quick Actions, Overview) */
+    .dashboard-page .dashboard-section {
         border: none;
         overflow: hidden;
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.94);
+        border: 1px solid rgba(148, 163, 184, 0.14);
+        box-shadow: 0 10px 30px rgba(30, 64, 175, 0.06);
     }
 
-    .section-header {
+    .dashboard-page .dashboard-section h4 {
+        color: #17365d;
+    }
+
+    .dashboard-page .section-header {
         border-bottom: 1px solid #e9ecef;
     }
 
-    .table thead th {
-        padding-top: 15px;
-        padding-bottom: 15px;
-    }
-
-    .table tbody td {
-        padding-top: 15px;
-        padding-bottom: 15px;
-    }
-
-    .summary-card {
-        border: 1px solid #e5e7eb;
-        border-radius: 12px;
+    /* Summary cards */
+    .dashboard-page .summary-card {
+        background: rgba(248, 251, 255, 0.9);
+        border: 1px solid #e5edf7;
+        border-radius: 15px;
         padding: 20px;
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        transition:
+            transform 0.2s ease,
+            box-shadow 0.2s ease;
     }
 
-    .summary-card:hover {
+    .dashboard-page .summary-card:hover {
         transform: translateY(-3px);
-        box-shadow: 0 5px 14px rgba(0, 0, 0, 0.06);
+        box-shadow: 0 10px 24px rgba(30, 64, 175, 0.08);
     }
 
-    .summary-active {
+    .dashboard-page .summary-active {
         border-left: 5px solid #198754;
     }
 
-    .summary-completed {
+    .dashboard-page .summary-completed {
         border-left: 5px solid #0d6efd;
     }
 
-    .summary-cancelled {
+    .dashboard-page .summary-cancelled {
         border-left: 5px solid #dc3545;
     }
 
-    .summary-symbol {
+    .dashboard-page .summary-symbol {
         font-size: 1.8rem;
     }
 
-    .empty-icon {
-        font-size: 3rem;
-    }
-
-    .overview-card {
-        border: 1px solid #e5e7eb;
-        border-radius: 12px;
+    /* Overview cards */
+    .dashboard-page .overview-card {
+        background: linear-gradient(
+            135deg,
+            rgba(248, 251, 255, 0.95),
+            rgba(255, 255, 255, 0.95)
+        );
+        border: 1px solid #e5edf7;
+        border-radius: 15px;
         padding: 20px;
-        transition: background-color 0.2s ease, transform 0.2s ease;
+        transition:
+            transform 0.2s ease,
+            box-shadow 0.2s ease;
     }
 
-    .overview-card:hover {
-        background-color: #f8fbff;
+    .dashboard-page .overview-card:hover {
+        background: #ffffff;
         transform: translateY(-3px);
+        box-shadow: 0 10px 24px rgba(30, 64, 175, 0.08);
     }
 
-    .overview-icon {
+    .dashboard-page .overview-icon {
+        width: 48px;
+        height: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 13px;
+        background: #edf5ff;
+        font-size: 1.5rem;
+        margin-bottom: 14px;
+    }
+
+    /* Empty state */
+    .dashboard-page .empty-icon {
+        width: 70px;
+        height: 70px;
+        margin-left: auto;
+        margin-right: auto;
+        border-radius: 20px;
+        background: #edf5ff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         font-size: 2rem;
-        margin-bottom: 12px;
+    }
+
+    /* Quick action buttons */
+    .dashboard-page .btn-primary,
+    .dashboard-page .btn-success,
+    .dashboard-page .btn-warning {
+        min-height: 58px;
+    }
+
+    /* Table styling */
+    .dashboard-page .table {
+        background: transparent;
+    }
+
+    .dashboard-page .table thead th {
+        background: #edf5ff;
+        color: #17365d;
+        font-size: 0.9rem;
+        border-bottom: 1px solid #dbeafe;
+        padding-top: 15px;
+        padding-bottom: 15px;
+    }
+
+    .dashboard-page .table tbody td {
+        border-color: #edf2f7;
+        padding-top: 15px;
+        padding-bottom: 15px;
     }
 
     @media (max-width: 768px) {
-        .dashboard-card {
+        .dashboard-page .dashboard-card {
             margin-bottom: 4px;
         }
 
-        .table {
+        .dashboard-page .table {
             font-size: 0.9rem;
         }
     }
 </style>
-
 {% endblock %}
